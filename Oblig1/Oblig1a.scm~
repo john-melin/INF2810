@@ -1,0 +1,115 @@
+;; -[Oppgave 1]-
+;;  (a) (* (+ 2 2) 5) 
+;;  evaluerer til 20
+;;
+;;  (b) (* (+ 2 2) (5))
+;;   Nei! Interpretern forventer en procedyre på venstre siden av (5). 
+;;   Isteden finner den numeralen 5 som ikke er kjent som en procedyre
+;;
+;;   (c) (* (2 + 2) 5)
+;;   Nei! Interpretern forventer en procedyre på venstre siden av (2 + 2). 
+;;   Isteden finner den numeralen 2 som ikke er kjent som en procedyre
+;;
+;;  (d) (define bar (/ 4 2))
+;;       bar
+;;   evaluerer til 2
+;;
+;;  (e) (- bar 2)
+;;  evaluerer til 0
+;;
+;;  (f) (/ (* bar 3 4 1) bar)
+;;  evaluerer til 12
+;;
+;; -[Oppgave 2]-
+;;
+;;  (a)
+;;  Forskjellen på special forms og vanlige procedyrer er at 
+;;  procedyrer vil evaluere alt før argumenter og verdier appliseres. 
+;;  Forskjellige special forms har på sin side egne rekkefølger å evaluere på.
+;;
+;;  -[OR]-
+;;  (or (= 1 2)
+;;    "piff!"
+;;    "paff!"
+;;    (zero? (1 - 1)))
+;;  I en or løkke trenger kun et utrykk være sant for at hele utrykket 
+;;  skal være sant. Derfor vil løkken terminere så fort den finner noe som 
+;;  er sant og returnere den verdien. Her er det første utrykket usant og 
+;;  vil sjekke neste. En string vil altid returnere sann og processen returnerer 
+;;  derfor “piff”. Utrykke (zero? (1 -1)) har en syntaktisk feil og skulle være (- 1 1) 
+;;  men ettersom “piff” allerede er evaluert til sant vil den aldri bli nådd. 
+;;
+;;  -[AND]-
+;;  (and (= 1 2)
+;;    "piff!"
+;;    "paff!"
+;;    (zero? (1 - 1)))
+;;  Når det gjelder “and-løkker” må derimot alle utrykk returnere sant og kan derfor 
+;;  termineres så fort den finner et predikat eller utrykk som ikke stemmer. 
+;;  I dette tilfellet blir heller ikke den siste syntaktiske feilen oppdaget av 
+;;  interpretern ettersom den ikke evalueres før de andre er blitt evaluert og testet. 
+;;  Dette fordi det første predikatet er false.
+;;
+;;  -[IF]-
+;; (if (positive? 42)
+;;  "poff!"
+;;  (i-am-undefined))
+;; Evalueringen til if-løkken skjer også kun når den trengs og til forskjell fra en prosedyre 
+;; terminerer og returnerer løkken så ført den har funnet et sant predikat. 
+;; Defor klager interpretern heller på den udefinerte prosedyren ev. varibelen som 
+;; ville bli nådd hvis 42 ikke var et positivt tall. Løkken returnerer da “poff”.
+;;
+;;
+
+;oppgave2b)
+(define (signcond x) 
+        (cond ((> x 0) 1)
+              ((< x 0) -1)
+              (else 0)))
+                     
+(define (signif x) 
+        (if (> x 0) 1
+        (if (< x 0) -1 0)))
+
+;oppgave2c)
+
+(define (sign x) 
+        (or (and (> x 0) 1) 
+            (and (< x 0) -1) 0))
+;; Ettersom or vil returnere verdien til det første utrykket som er sant vil 
+;; den hvis ikke noen av and utrykkene er sanne returnere 0 for "erlik"
+;; Et "and" utrykk må ha true på alle utrykk og vil derfor returnere det siste utrykket 
+;; som er 1 i tilfellet "større enn" og -1 i tilfellet av "mindre enn"
+
+
+;oppgave 3a)                  
+(define (add1 x) (+ x 1))
+(define (sub1 x) (- x 1))
+
+;oppgave 3b)
+(define (plusIterative x y)
+        (if (zero? y) x 
+            (plus (add1 x) (sub1 y))))
+
+;;Processen er iterativ ettersom ved basistilfelle er vi ferdig med utregningene. 
+;;Minnet øker ved dette tilfellet ikke ettersom det ikke er noen resterende operationer igjen. 
+;;Vi må da ikke legge sammen resultatet som returneres til forskjell fra en rekursiv process.
+;;I en iterativ process så sier variblene noe om hvilken tilstand vi er i. 
+;;Hvis vi skulle ta et avbrekk fra en utregning midt i så kunne når som helst 
+;;gjenopptatt den med verdiene varibalene hadde da vi avbrutt. 
+;;Dette er ikke tilfellet med den rekursive prosessen. Her er vi hele tiden avhengig av 
+;;startpunktet og kjeden av utregninger frem til basisstadiet for å nå målet vårt. 
+;;Derfor ville et avbrudd krevd at vi måtte begynne fra starter igjen.
+
+;oppgave 3c)
+(define (plusRecursive x y)
+        (if (zero? y) x 
+            (add1 (plusRecursive x (sub1 y)))))
+
+;oppgave 3d)
+(define (power-close-to b n)
+  (define (power-iter e)
+        (if (> (expt b e) n) 
+            e
+            (power-iter (+ 1 e))))
+  (power-iter 1))
