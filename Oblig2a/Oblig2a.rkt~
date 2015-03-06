@@ -1,5 +1,3 @@
-(load "huffman.scm")
-
 ;;Oblig 2a
 
 
@@ -74,28 +72,5 @@
 
 ;; Oppgave 2a
 
-(define (member? symbol list)
-  (cond ((null? (car list)) #f)
-        ((equal? symbol (car list)) #t)
-        (else (member? symbol (cdr list)))))
 
-;; Oppgave 2b
-
-;; Svaret ligger i varibelen tree som brukes i den interne procedyren decode-1 etter at 
-;; symbolet fra en 'leaf' har blitt consa' sammen med cdr av 'bits'. Den brukes da til å komme
-;; tilbake til toppen av treet da current-branch kun går nedover i treet.
-
-;; Oppgave 2c
-
-(define (decode bits tree)
-  (define (decode-1 bits current-branch symbol-list)
-    (if (null? bits)
-        symbol-list
-        (let ((next-branch
-               (choose-branch (car bits) current-branch)))
-          (if (leaf? next-branch)
-              (decode-1 (cdr bits) tree (append symbol-list 
-                                              (symbol-leaf next-branch)))
-              (decode-1 (cdr bits) next-branch symbol-list) ) )))
-  (decode-1 bits tree '()))
 
