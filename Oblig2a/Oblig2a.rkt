@@ -1,6 +1,7 @@
 (load "huffman.scm")
+;; As one of the team members is a english native speaker we would prefer to get feedback in english.
 
-;;Oblig 2a
+;;Oblig 2a 
 
 
 ;;Oppgave 1a
@@ -131,6 +132,11 @@
       (let ((current-tree (make-code-tree (car tree) (cadr tree)))) ;; make a tree of the current car and cadr
         (succesive-merge (adjoin-set current-tree (cddr tree))))))
 
+(define freqs '((a 2) (b 5) (c 1) (d 3) (e 1) (f 3)))
+(define codebook (grow-huffman-tree freqs))
+(decode (encode '(a b c) codebook) codebook)
+
+
 ;; Oppgave 2g
 (define alfabet '((ninjas 57) (samurais 20) (fight 45) 
                               (night 12) (hide 3) (in 2) (ambush 2) (defeat 1) 
@@ -157,15 +163,34 @@
 
 ;; Oppgave 2h
 (define (huffman-leaves tree)
-  (cond ((null? tree) )
+  (define (make-set current-tree set)
+  (cond ((null? current-tree) '())
+        ((leaf? current-tree) (list (symbol-leaf current-tree) (weight-leaf current-tree)))
+        (else (cons (make-set (left-branch tree) set)
+                    (make-set (right-branch tree) set)))))
+  (make-set tree '()))
+
+(define (huffman-leaves tree)
+  (cond ((null? tree) '())
         ((leaf? tree) (list (symbol-leaf tree) (weight-leaf tree)))
         (else (cons (huffman-leaves (left-branch tree))
-                    (huffman-leaves (right-branch tree))))));; wrong output jumbled
+                    (huffman-leaves (right-branch tree))))))
+
 
 (huffman-leaves sample-tree)
 (newline)
-(huffman-leaves codebook)
-(newline)
 
 ;; Oppgave 2i
+(define (expected-code-length tree)
+  (define (sum-of-frequency current-tree total-frequency)
+    (cond ((null? current-tree) '())
+          ((leaf? current-tree)
+           (let ((bit-length
+                  (length (encode (list (symbol-leaf current-tree)) tree))))
+                 (* bit-length
+                    (/ (weight current-tree) total-frequency))))
+          (else (+ (sum-of-frequency (left-branch current-tree) total-frequency)
+                   (sum-of-frequency (right-branch current-tree)total-frequency)))))
+(sum-of-frequency tree (weight tree)))
 
+(expected-code-length codebook)
