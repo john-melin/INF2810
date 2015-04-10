@@ -92,5 +92,19 @@ bar
 (cycle? bah)
 ;;(cycle? bar)
 
+;; e)
+(define (make-ring x)
+  (define (internal first next)
+    (if (null? (cdr next))
+        (set-cdr! next first)
+        (internal first (cdr next))))
+  (internal (car x) (cdr x)))
+
+(define (get-top x)
+  (car x))
+
+(define (left-rotate! x)
+  (set-car! x (car (cdr x))))
+
 
 
